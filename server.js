@@ -1,37 +1,82 @@
-const express = require('express');
-// Import and require mysql2
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const { printTable } = require('console-table-printer');
+const cTable = require('console.table');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
-// Connect to database
 const db = mysql.createConnection(
   {
     host: 'localhost',
-    // MySQL username,
+    port: 3306,
     user: 'root',
-    // MySQL password
     password: '',
-    database: 'employees'
-  },
-  console.log(`Connected to the employees_db database.`)
-);
+    database: 'employees_db'
+  });
 
-// Query database
-db.query('SELECT * FROM ', function (err, results) {
-  console.log(results);
+db.connect(function () {
+
+  console.log(
+    `
+      ┌───┬─┐┌─┬───┬┐──┌───┬┐──┌┬───┬───┐┌────┬───┬───┬───┬┐┌─┬───┬───┐
+      │┌──┤│└┘││┌─┐││──│┌─┐│└┐┌┘│┌──┤┌──┘│┌┐┌┐│┌─┐│┌─┐│┌─┐│││┌┤┌──┤┌─┐│
+      │└──┤┌┐┌┐│└─┘││──││─│├┐└┘┌┤└──┤└──┐└┘││└┤└─┘││─│││─└┤└┘┘│└──┤└─┘│
+      │┌──┤│││││┌──┤│─┌┤│─││└┐┌┘│┌──┤┌──┘──││─│┌┐┌┤└─┘││─┌┤┌┐││┌──┤┌┐┌┘
+      │└──┤││││││──│└─┘│└─┘│─││─│└──┤└──┐──││─│││└┤┌─┐│└─┘│││└┤└──┤││└┐
+      └───┴┘└┘└┴┘──└───┴───┘─└┘─└───┴───┘──└┘─└┘└─┴┘─└┴───┴┘└─┴───┴┘└─┘
+    `
+  )
+
+  showMainMenu()
 });
 
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
+const showMainMenu = () => {
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'mainMenu',
+      message: 'Plase choose from the options below:',
+      choices: ['Show All Employees', 'Show Departments', 'Show Roles']
+    },
+  ])
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    .then(answer => {
+      if (answer.mainMenu === 'Show All Employees') {
+        showEmployees();
+      }
+      else if (answer.mainMenu === 'Show Departments') {
+        showDepartment();
+      }
+      else if (answer.mainMenu === 'Show Roles') {
+        showRole();
+      }
+    })
+
+  function showEmployees() {
+    console.log('Viewing all Employees');
+    db.query('SELECT * FROM employee',
+      function (err, res) {
+        if (err) throw err;
+        printTable(res);
+        showMainMenu();
+      });
+  }
+
+  function showDepartment() {
+    console.log('Viewing all Employees');
+    db.query('SELECT * FROM department',
+      function (err, res) {
+        if (err) throw err;
+        printTable(res);
+        showMainMenu();
+      });
+  }
+
+  function showRole() {
+    console.log('Viewing all Employees');
+    db.query('SELECT * FROM role',
+      function (err, res) {
+        if (err) throw err;
+        printTable(res);
+        showMainMenu();
+      });
+  }
+}
