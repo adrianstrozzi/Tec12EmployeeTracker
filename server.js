@@ -25,58 +25,92 @@ db.connect(function () {
     `
   )
 
-  showMainMenu()
+  promptMainMenu()
 });
 
-const showMainMenu = () => {
+const promptMainMenu = () => {
   inquirer.prompt([
     {
       type: 'list',
       name: 'mainMenu',
       message: 'Plase choose from the options below:',
-      choices: ['Show All Employees', 'Show Departments', 'Show Roles']
+      choices: ['View All Employees', 'View All Departments', 'View All Roles', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role']
     },
   ])
 
     .then(answer => {
-      if (answer.mainMenu === 'Show All Employees') {
-        showEmployees();
+      if (answer.mainMenu === 'View All Employees') {
+        viewEmployees();
       }
-      else if (answer.mainMenu === 'Show Departments') {
-        showDepartment();
+      else if (answer.mainMenu === 'View All Departments') {
+        viewDepartments();
       }
-      else if (answer.mainMenu === 'Show Roles') {
-        showRole();
+      else if (answer.mainMenu === 'View All Roles') {
+        viewRoles();
+      }
+      else if (answer.mainMenu === 'Add Department') {
+        addDepartment();
+      }
+      else if (answer.mainMenu === 'Add Role') {
+        addRole();
+      }
+      else if (answer.mainMenu === 'Add Employee') {
+        addEmployee();
+      }
+      else if (answer.mainMenu === 'Update Employee Role') {
+        updateEmployee();
       }
     })
 
-  function showEmployees() {
+  function viewEmployees() {
     console.log('Viewing all Employees');
-    db.query('SELECT * FROM employee',
+    db.query(`SELECT 
+    employee.id AS ID,
+    employee.first_name AS "First Name",
+    employee.last_name AS "Last Name",
+    CONCAT (manager.first_name, " ", manager.last_name) AS Manager,
+    role.title AS Title, 
+    role.salary AS Salary,
+    department.name AS Department
+    FROM employee
+    LEFT JOIN manager ON employee.manager_id = manager.id
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    `,
       function (err, res) {
         if (err) throw err;
         printTable(res);
-        showMainMenu();
+        promptMainMenu();
       });
   }
 
-  function showDepartment() {
-    console.log('Viewing all Employees');
-    db.query('SELECT * FROM department',
+  function viewDepartments() {
+    console.log('Viewing all Departments');
+    db.query(`
+    SELECT
+    department.id AS ID,
+    department.name AS "Department Name"
+    FROM department`,
       function (err, res) {
         if (err) throw err;
         printTable(res);
-        showMainMenu();
+        promptMainMenu();
       });
   }
 
-  function showRole() {
-    console.log('Viewing all Employees');
-    db.query('SELECT * FROM role',
+  function viewRoles() {
+    console.log('Viewing all Roles');
+    db.query(`SELECT 
+    role.id AS ID,
+    role.title AS Title,
+    role.salary AS Salary,
+    department.name AS Department
+    FROM role
+    LEFT JOIN department ON role.department_id = department.id`,
       function (err, res) {
         if (err) throw err;
         printTable(res);
-        showMainMenu();
+        promptMainMenu();
       });
   }
 }
