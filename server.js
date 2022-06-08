@@ -33,7 +33,7 @@ const promptMainMenu = () => {
       type: 'list',
       name: 'mainMenu',
       message: 'Please choose from the options below:',
-      choices: ['View All Employees', 'View All Departments', 'View All Roles', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role']
+      choices: ['View All Employees', 'View All Departments', 'View All Roles', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Exit']
     },
   ])
 
@@ -58,6 +58,9 @@ const promptMainMenu = () => {
       }
       else if (answer.mainMenu === 'Update Employee Role') {
         updateEmployeeRole();
+      }
+      else if (answer.mainMenu === 'Exit') {
+        db.end();
       }
     })
 
@@ -218,7 +221,7 @@ const promptMainMenu = () => {
     SELECT role.id, role.title FROM role
     `)
       .then(([tableRows]) => {
-        let availableRoles = tableRows.map(({ id, title }) => ({
+        var availableRoles = tableRows.map(({ id, title }) => ({
           name: title,
           value: id
 
@@ -286,16 +289,14 @@ const promptMainMenu = () => {
     FROM employee
     LEFT JOIN role ON employee.role_id = role.id`)
       .then(([tableRows]) => {
-        let availableEmployees = tableRows.map(({ last_name, id }) => ({
+        var availableEmployees = tableRows.map(({ last_name, id }) => ({
           name: last_name,
           value: id
         }))
-        let availableRoles = tableRows.map(({ id, title }) => ({
+        var availableRoles = tableRows.map(({ title, id }) => ({
           name: title,
           value: id
-        })
-        );
-
+        }))
         inquirer.prompt([
 
           {
@@ -315,7 +316,7 @@ const promptMainMenu = () => {
 
 
             console.log('Updating Employee Role...');
-            const sql = `UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`;
+            const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
             const params = [listedEmployees, listedRoles];
             db.query(sql, params, async function (err, res) {
               if (err) throw (err);
@@ -329,6 +330,7 @@ const promptMainMenu = () => {
                 console.log(err);
               }
             })
+
           })
       })
   }

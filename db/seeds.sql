@@ -18,8 +18,12 @@ VALUES
   ("Salesperson", 80000, 1),
   ("Sales Lead", 100000, 1);
 
-
-
+INSERT INTO manager
+  (first_name, last_name)
+VALUES
+  ("Bruce", "Wayne"),
+  ("Alex", "Turner"),
+  ("Julian", "Casablancas");
 
 INSERT INTO employee
   (first_name, last_name, role_id, manager_id)
@@ -32,11 +36,3 @@ VALUES
   ("Julian", "Casablancas", 6, NULL),
   ("Alex", "Turner", 7, NULL),
   ("Caleb", "Followill", 8, 3);
-
-
-INSERT INTO manager
-  (first_name, last_name)
-VALUES
-  ("Bruce", "Wayne", 1, NULL),
-  ("Alex", "Turner", 2, NULL),
-  ("Julian", "Casablancas", 3, NULL)
