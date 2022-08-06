@@ -24,7 +24,7 @@
 
 ## <span style="color:violet">Video Tutorial</span>
 
-Use this `link` to access a video tutorial: [Adrian Strozzi - Employee Tracker](https://drive.google.com/file/d/1rCW8PV7mXX9mIP-JXy4RhDxPa2ALUuZy/view?usp=sharing)
+Use this `link` to access a video tutorial: [Adrian Strozzi - Employee Tracker](https://youtu.be/Xiy_62kiLZo)
 
 ## <span style="color:violet">Credits</span>
 
